@@ -1,4 +1,3 @@
-
 var t_template = '<p>Drop tweet link here</p><div class="input text"><label>or paste URL:</label><input type="text" class="paste-block"></div>';
 var tweet_template = '<div class="tweet media"><div class="img"><img src="<%= user.profile_image_url %>" class="tweet-avatar"></div><div class="bd tweet-body"><p><a href="http://twitter.com/#!/<%= user.screen_name %>">@<%= user.screen_name %></a>: <%= text %></p><time><%= created_at %></time></div></div>';
 
@@ -8,14 +7,12 @@ var Tweet = SirTrevor.BlockType.extend({
   className: "tweet",
   dropEnabled: true,
   
-  dropzoneHTML: template,
-  
-  validate: function() {},
+  dropzoneHTML: t_template,
   
   loadData: function(data){
     this.$block.find(".dropzone").hide();
     this.$el.show();
-    this.$el.html(_.template(t_template, data));
+    this.$el.html(_.template(tweet_template, data));
   },
   
   onContentPasted: function(event){
@@ -57,7 +54,6 @@ var Tweet = SirTrevor.BlockType.extend({
             // Save this data on the block
             var dataStruct = this.$el.data('block');
             dataStruct.data = obj;
-            
             this.$el.html(_.template(tweet_template, obj)); // Render
             this.$dropzone.hide();
             this.$el.show();

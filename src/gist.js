@@ -15,8 +15,6 @@ var Gist = SirTrevor.BlockType.extend({
   
   dropzoneHTML: template,
   
-  validate: function() {},
-  
   loadData: function(data){
     this.loading();
     this._super("loadGist", data.id);
