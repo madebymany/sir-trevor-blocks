@@ -4,7 +4,7 @@
 
 var md_template = '<div class="expanding-textarea"><pre><span></span><br></pre><textarea class="required <%= className %>"></textarea></div>';
 
-var Markdown = SirTrevor.BlockType.extend({ 
+SirTrevor.Blocks.Markdown = SirTrevor.Block.extend({ 
   
   title: "Markdown",
   className: "markdown",
@@ -14,13 +14,13 @@ var Markdown = SirTrevor.BlockType.extend({
   },
   
   loadData: function(data){
-    this.$('.markdown').html(data.text);
+    this.$$('.markdown').html(data.text);
   },
   
   onBlockRender: function(){
     /* Make our expanding text area */
     
-    var cont = this.$('.expanding-textarea'),
+    var cont = this.$$('.expanding-textarea'),
         area = cont.find('textarea'),
         span = cont.find('span');
         
@@ -33,11 +33,8 @@ var Markdown = SirTrevor.BlockType.extend({
   
   toData: function() {
     var bl = this.$el,
-        dataStruct = bl.data('block'),
-        content;
+        dataStruct = bl.data('block');
     
-    dataStruct.data.text = this.$('.markdown').val();
+    dataStruct.data.text = this.$$('.markdown').val();
   }
 });
-
-SirTrevor.BlockTypes.Markdown = new Markdown();

@@ -4,7 +4,7 @@
 
 var od_template = '<div class="text-block <%= className %>" contenteditable="true"></div>';
 
-var OrderedList = SirTrevor.BlockType.extend({ 
+SirTrevor.Blocks.Ol = SirTrevor.Block.extend({ 
   
   title: "List",
   className: "ordered-list",
@@ -15,7 +15,7 @@ var OrderedList = SirTrevor.BlockType.extend({
   
   onBlockRender: function(){
     
-    this.$('.text-block').bind('click', function(){
+    this.$$('.text-block').bind('click', function(){
       if($(this).html().length === 0){
         document.execCommand("insertOrderedList",false,false);
       }
@@ -23,12 +23,12 @@ var OrderedList = SirTrevor.BlockType.extend({
     
     // Put in a list
     if (_.isEmpty(this.data)) {
-      this.$('.text-block').focus().click();
+      this.$$('.text-block').focus().click();
     }
   },
     
   loadData: function(data){
-    this.$('.text-block').html("<ol>" + this.instance._toHTML(data.text, this.type) + "</ol>");
+    this.$$('.text-block').html("<ol>" + this.instance._toHTML(data.text, this.type) + "</ol>");
   },
   
   toMarkdown: function(markdown){
@@ -41,5 +41,3 @@ var OrderedList = SirTrevor.BlockType.extend({
     return html.replace(/^ 1. (.+)$/mg,"<li>$1</li>");
   }
 });
-
-SirTrevor.BlockTypes.OrderedList = new OrderedList();

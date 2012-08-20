@@ -5,7 +5,7 @@
 var template = '<p>Drop gist link here</p><div class="input text"><label>or paste URL:</label><input type="text" class="paste-block"></div>';
 var gist_template = '<div class="gist"><%= div %></div>';
 
-var Gist = SirTrevor.BlockType.extend({ 
+SirTrevor.Blocks.Gist = SirTrevor.Block.extend({ 
   
   title: "Gist",
   className: "gist-block",
@@ -16,8 +16,7 @@ var Gist = SirTrevor.BlockType.extend({
   dropzoneHTML: template,
   
   loadData: function(data){
-    this.loading();
-    this._super("loadGist", data.id);
+    this.loadGist(data.id);
   },
   
   loadGist: function(gist_id) {
@@ -33,9 +32,9 @@ var Gist = SirTrevor.BlockType.extend({
       
       $('head').append('<link rel="stylesheet" href="'+data.stylesheet+'" type="text/css">');
       
-      this.$el.html(data.div);
+      this.$editor.html(data.div);
       this.$dropzone.fadeOut(250);
-      this.$el.show();
+      this.$editor.show();
       this.ready();
     };
 
@@ -56,7 +55,7 @@ var Gist = SirTrevor.BlockType.extend({
     // Content pasted. Delegate to the drop parse method
     var input = $(event.target),
         val = input.val();
-    this._super("handleDropPaste", val);
+    this.handleDropPaste(val);
   },
   
   handleDropPaste: function(url) {
@@ -70,7 +69,7 @@ var Gist = SirTrevor.BlockType.extend({
           this.loading();
           
           ID = ID[0];
-          this._super("loadGist", ID);
+          this.loadGist(ID);
         }
       }
     }
@@ -78,8 +77,6 @@ var Gist = SirTrevor.BlockType.extend({
 
   onDrop: function(transferData){
     var url = transferData.getData('text/plain');
-    this._super("handleDropPaste", url);
+    this.handleDropPaste(url);
   }
 });
-
-SirTrevor.BlockTypes.Gist = new Gist();
