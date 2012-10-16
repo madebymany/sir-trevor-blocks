@@ -33,8 +33,10 @@ SirTrevor.Blocks.Markdown = SirTrevor.Block.extend({
   
   toData: function() {
     var bl = this.$el,
-        dataStruct = bl.data('block');
+        dataObj = {}
     
-    dataStruct.data.text = this.$$('.markdown').val();
+    dataObj.text = this.$$('.markdown').val();
+
+		this.setData(dataObj)
   }
 });
