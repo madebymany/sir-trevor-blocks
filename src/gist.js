@@ -22,14 +22,8 @@ SirTrevor.Blocks.Gist = SirTrevor.Block.extend({
   loadGist: function(gist_id) {
     // Get the gist data (too big to store in JSON)
     var callbackSuccess = function(data) {
-      // Streamlined (we can't store the div item, we'll need to grab it each time)
-      var obj = {
-        id: gist_id
-      };
-      
-      var dataStruct = this.$el.data('block');
-      dataStruct.data = obj;
-      
+      this.setData({ id: gist_id });
+
       $('head').append('<link rel="stylesheet" href="'+data.stylesheet+'" type="text/css">');
       
       this.$editor.html(data.div);
