@@ -1,76 +1,72 @@
-/*
-  Gist BlockType
-*/
+SirTrevor.Blocks.Gist = (function(){
 
-var template = '<p>Drop gist link here</p><div class="input text"><label>or paste URL:</label><input type="text" class="paste-block"></div>';
-var gist_template = '<div class="gist"><%= div %></div>';
+  return SirTrevor.Block.extend({
 
-SirTrevor.Blocks.Gist = SirTrevor.Block.extend({ 
-  
-  title: "Gist",
-  className: "gist-block",
-  dropEnabled: true,
-  
-  editorHTML: "<div></div>",
-  
-  dropzoneHTML: template,
-  
-  loadData: function(data){
-    this.loadGist(data.id);
-  },
-  
-  loadGist: function(gist_id) {
-    // Get the gist data (too big to store in JSON)
-    var callbackSuccess = function(data) {
-      this.setData({ id: gist_id });
+    type: "Gist",
+    droppable: true,
+    pastable: true,
+    fetchable: true,
 
-      $('head').append('<link rel="stylesheet" href="'+data.stylesheet+'" type="text/css">');
-      
-      this.$editor.html(data.div);
-      this.$dropzone.fadeOut(250);
-      this.$editor.show();
-      this.ready();
-    };
+    loadData: function(data) {
+      this.loadRemoteGist(data.id);
+    },
 
-    var callbackFail = function(){
-      this.ready();
-    };
-    
-    // Make our AJAX call
-    $.ajax({
-      url: "https://gist.github.com/" + gist_id + ".json",
-      dataType: "JSONP",
-      success: _.bind(callbackSuccess, this),
-      error: _.bind(callbackFail, this)
-    });
-  },
-  
-  onContentPasted: function(event){
-    // Content pasted. Delegate to the drop parse method
-    var input = $(event.target),
-        val = input.val();
-    this.handleDropPaste(val);
-  },
-  
-  handleDropPaste: function(url) {
-    if(_.isURI(url)) 
-    {
-      if (url.indexOf("gist") != -1) {
-        // Twitter status
-        var ID = url.match(/[^\/]+$/);
-        
-        if (!_.isEmpty(ID)) {
-          this.loading();
-          
-          ID = ID[0];
-          this.loadGist(ID);
-        }
+    onContentPasted: function(event){
+      // Content pasted. Delegate to the drop parse method
+      var input = $(event.target),
+          val = input.val();
+
+      this.handleGistDropPaste(val);
+    },
+
+    handleGistDropPaste: function(url) {
+      if (!this.validGistUrl(url)) {
+        this.addMessage("Invalid Gist URL");
+        return;
       }
-    }
-  },
 
-  onDrop: function(transferData){
-    var url = transferData.getData('text/plain');
-    this.handleDropPaste(url);
-  }
-});
+      var gistID = url.match(/[^\/]+$/);
+      if (!_.isEmpty(gistID)) {
+        gistID = gistID[0];
+        this.loading();
+        this.setData({ id: gistID });
+        this.loadRemoteGist(gistID);
+      }
+    },
+
+    validGistUrl: function(url) {
+      return (_.isURI(url) &&
+              url.indexOf("gist.github") !== -1);
+    },
+
+    onDrop: function(transferData){
+      var url = transferData.getData('text/plain');
+      this.handleTwitterDropPaste(url);
+    },
+
+    loadRemoteGist: function(gistID) {
+      var ajaxOptions = {
+        url: "//gist.github.com/" + gistID + ".json",
+        dataType: "jsonp"
+      };
+
+      this.fetch(ajaxOptions, this.onGistFetchSuccess, this.onGistFetchFail);
+    },
+
+    onGistFetchSuccess: function(data) {
+      // And render
+      $('head').append('<link rel="stylesheet" href="//gist.github.com'+data.stylesheet+'" type="text/css">');
+
+      this.$inputs.hide();
+      this.$editor.html(data.div).show();
+      this.ready();
+    },
+
+    onGistFetchFail: function() {
+      this.addMessage("There was a problem fetching your Gist");
+      this.ready();
+    }
+
+  });
+
+})();
