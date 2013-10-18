@@ -41,7 +41,7 @@ SirTrevor.Blocks.Gist = (function(){
 
     onDrop: function(transferData){
       var url = transferData.getData('text/plain');
-      this.handleTwitterDropPaste(url);
+      this.handleGistDropPaste(url);
     },
 
     loadRemoteGist: function(gistID) {
