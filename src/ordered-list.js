@@ -8,7 +8,7 @@ SirTrevor.Blocks.OrderedList = (function() {
 
   return SirTrevor.Block.extend({
 
-    type: "OrderedList",
+    type: "ordered_list",
 
     icon_name: 'list',
 
